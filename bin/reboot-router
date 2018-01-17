@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REBOOT_MY_ROUTER_HOME=$(cd "${0%/*}"/.. && pwd)
+ENVFILE_PATH="$REBOOT_MY_ROUTER_HOME/.env"
+source "$ENVFILE_PATH"
+BASE_URL="http://${BASIC_AUTH_USERNAME}:${BASIC_AUTH_PASSWORD}@${ROUTER_HOST}"
+
+curl -s "${BASE_URL}/wan_lan02_1.html" \
+  2>&1 >/dev/null
+
+curl -s "${BASE_URL}/boafrm/formDdns" \
+  -H "Referer: http://${ROUTER_HOST}/wan_lan02_1.html" \
+  -F 'submit-url=/wan_lan02_1.html' \
+  -F 'ddnsEnabled=OFF' \
+  2>&1 >/dev/null
+
+curl -s "${BASE_URL}/boafrm/formRebootCheck" \
+  -H "Referer: http://${ROUTER_HOST}/update.html" \
+  -F 'submit-url=/wan_lan02_1.html' \
+  2>&1 >/dev/null
